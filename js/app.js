@@ -1,14 +1,13 @@
 import User from './components/User.js';
 import AppHomeRoute from './routes/AppHomeRoute';
 
-let userId = getQueryParams(document.location.search).user || "55f901fe0b0232dc0fde8530";
-console.log(userId);
+let userId = getQueryParams(document.location.search).user || "55f846970108fadf3dca1ed5";
 
 React.render(
   <Relay.RootContainer
     Component={User}
     //TODO Update userId
-    route={new AppHomeRoute({userId: "55f901fe0b0232dc0fde8530"})}
+    route={new AppHomeRoute({userId: userId})}
   />,
   document.getElementById('root')
 );

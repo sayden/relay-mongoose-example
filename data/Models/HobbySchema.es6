@@ -19,7 +19,7 @@ exports.HobbySchema = Hobby;
 
 exports.getHobbyById = (root, {id}) => {
   return new Promise((resolve, reject) => {
-    Hobby.findById(id).exec((err, res) => {
+    Hobby.findOne({id:id}).exec((err, res) => {
       err ? reject(err) : resolve(res);
     })
   });

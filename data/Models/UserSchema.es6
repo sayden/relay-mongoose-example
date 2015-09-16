@@ -26,9 +26,9 @@ exports.UserSchema = User;
 
 exports.getUserById = (root, {id}) => {
   return new Promise((resolve, reject) => {
-    User.findById(id).populate('hobbies friends').exec((err, res) => {
-      err ? reject(err) : resolve(res);
-    })
+    User.findOne({id:id}).populate('hobbies friends').exec((err,res) => {
+        err ? reject(err) : resolve(res);
+    });
   });
 };
 
