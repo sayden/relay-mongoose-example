@@ -88,6 +88,6 @@ userMark.save();
 
 
 setTimeout(function () {
-  console.log(userRichard._id);
+  console.log(userRichard.id);
   mongoose.disconnect();
 }, 1000);

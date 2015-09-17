@@ -206,6 +206,10 @@ let HobbyMutations = {
       description: {
         name: 'description',
         type: new GraphQLNonNull(GraphQLString)
+      },
+      userId: {
+        name: 'userId',
+        type: UserType
       }
     },
     resolve: Hobby.addHobby,
