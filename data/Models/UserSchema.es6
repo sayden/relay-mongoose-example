@@ -81,3 +81,15 @@ exports.updateUser = (root, {name, surname, age ,hobbies, friends, id}) => {
     });
   });
 };
+
+exports.updateAge = (root, {age, id}) => {
+  console.log(age, root);
+
+  return new Promise((resolve, reject) => {
+    User.update({id:id}, {age:age}), (err, res) => {
+      User.find({id:id}, (err, res) => {
+        err || res.length != 1 ? reject(err) : resolve(res[0]);
+      });
+    }
+  })
+};

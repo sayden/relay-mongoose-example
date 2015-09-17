@@ -1,5 +1,6 @@
 import HobbyList from './HobbyList.js';
 import FriendsList from './FriendsList.js';
+import Age from './Age.js';
 
 class User extends React.Component {
   render() {
@@ -12,7 +13,7 @@ class User extends React.Component {
         <HobbyList user={user} />
         <h2>Friends</h2>
         <FriendsList user={user} />
-        <h2>Age: {user.age}</h2>
+        <Age user={user} />
       </div>
     );
   }

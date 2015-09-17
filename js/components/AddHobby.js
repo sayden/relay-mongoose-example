@@ -11,9 +11,7 @@ class AddHobby extends React.Component {
   }
 
   handleChange (event) {
-    //this.setState({hobby:"jgk"});
     this.setState({hobby:event.target.value});
-    //this.state.hobby = event.target.value;
   }
 
   render() {

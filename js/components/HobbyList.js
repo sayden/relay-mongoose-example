@@ -1,5 +1,4 @@
 import Hobby from './Hobby.js';
-import AddHobby from './AddHobby.js';
 
 class HobbyList extends React.Component {
   render() {
@@ -9,7 +8,6 @@ class HobbyList extends React.Component {
     });
 
     return (<div>
-              <div><AddHobby /></div>
               <div>{hobbies}</div>
             </div>);
   }

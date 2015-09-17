@@ -9,8 +9,13 @@ import {
   GraphQLID,
   GraphQLInterfaceType,
   GraphQLString,
-  GraphQLInt
+  GraphQLInt,
+  GraphQLInputObjectType
   } from 'graphql';
+
+import {
+  mutationWithClientMutationId
+  } from 'graphql-relay';
 
 
 let Node = new GraphQLInterfaceType({
@@ -142,58 +147,57 @@ let HobbyQueries = {
   }
 };
 
-let UserMutations = {
-  addUser: {
-    type: UserType,
-    args: {
-      name: {
-        name: 'name',
-        type: new GraphQLNonNull(GraphQLString)
-      },
-      surname: {
-        name: 'surname',
-        type: new GraphQLNonNull(GraphQLString)
-      },
-      age: {
-        name: 'age',
-        type: GraphQLInt
-      },
-      hobbies: {
-        name: 'hobbies',
-        type: new GraphQLList(GraphQLID)
-      },
-      friends: {
-        name: 'friends',
-        type: new GraphQLList(GraphQLID)
-      }
-    },
-    resolve: User.addUser,
-    resolveType: UserType
+//let UserMutations = {
+//  updateAge: {
+//    type: new GraphQLObjectType({
+//      name: 'UpdateAgePayload',
+//      fields: {
+//        clientMutationId: {
+//          type: new GraphQLNonNull(GraphQLString)
+//        }
+//      }
+//    }),
+//    args: {
+//      input: {
+//        type: new GraphQLNonNull(UserType),
+//        inputFields:[
+//          {name:"clientMutationId", type: new GraphQLNonNull(GraphQLString)},
+//        ]
+//      }
+//    },
+//    resolve: User.updateAge,
+//    resolveType: new GraphQLObjectType({
+//      name: 'UpdateAgePayload',
+//      fields: {
+//        clientMutationId: {
+//          type: new GraphQLNonNull(GraphQLString)
+//        }
+//      }
+//    })
+//  }
+//};
+
+let UserMutations = mutationWithClientMutationId({
+  name: 'UpdateAge',
+  inputFields: {
+    age: { type: new GraphQLNonNull(GraphQLInt) }
   },
-  updateUser: {
-    type: UserType,
-    args: {
-      id: {
-        name: 'id',
-        type: GraphQLID
-      },
-      name: {
-        name: 'name',
-        type: GraphQLString
-      },
-      surname: {
-        name: 'surname',
-        type: GraphQLString
-      },
-      age: {
-        name: 'age',
-        type: GraphQLInt
-      }
+
+  outputFields: {
+    todoEdge: {
+      type: UserType,
+      resolve: User.getUserById
     },
-    resolve: User.updateUser,
-    resolveType: UserType
+    //viewer: {
+    //  type: UserType,
+    //  resolve: () => getViewer()
+    //}
+  },
+
+  mutateAndGetPayload: ({age}) => {
+    return User.updateAge(age);
   }
-};
+});
 
 let HobbyMutations = {
   addHobby: {
@@ -209,7 +213,7 @@ let HobbyMutations = {
       },
       userId: {
         name: 'userId',
-        type: UserType
+        type: GraphQLID
       }
     },
     resolve: Hobby.addHobby,
