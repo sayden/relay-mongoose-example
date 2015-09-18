@@ -25,16 +25,18 @@ let User = mongoose.model('User', UserSchema);
 exports.UserSchema = User;
 
 exports.getQueryUserById = (root, {id}) => {
-  return this.getUserById(id);
+  return getUserById(id);
 };
 
-exports.getUserById = (id) => {
+function getUserById(id) {
   return new Promise((resolve, reject) => {
     User.findOne({id:id}).populate('hobbies friends').exec((err,res) => {
         err ? reject(err) : resolve(res);
     });
   });
-};
+}
+
+exports.getUserById = getUserById;
 
 exports.updateUser = (user) => {
   return new Promise((resolve, reject) => {
@@ -91,9 +93,10 @@ exports.updateAge = ({age, clientMutationId}) => {
 
   return new Promise((resolve, reject) => {
     User.update({id:clientMutationId}, {age:age}, (err, res) => {
-      User.find({id:clientMutationId}, (err, res) => {
-        err || res.length != 1 ? reject(err) : resolve(res[0]);
-      });
+      err ? reject(err) : resolve(res);
+      //User.find({id:clientMutationId}, (err, res) => {
+      //  err || res.length != 1 ? reject(err) : resolve(res[0]);
+      //});
     });
   });
 };

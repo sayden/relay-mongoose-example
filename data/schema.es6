@@ -126,7 +126,7 @@ let UserQueries = {
         type: GraphQLID
       }
     },
-    resolve: User.getUserById
+    resolve: User.getQueryUserById
   }
 };
 
@@ -156,9 +156,7 @@ let UserUpdateAge = mutationWithClientMutationId({
   outputFields: {
     user: {
       type: UserType,
-      resolve: (a) => {
-        return User.getUserById({}, a);
-      }
+      resolve: ({clientMutationId}) => User.getUserById(clientMutationId)
     }
   },
 
