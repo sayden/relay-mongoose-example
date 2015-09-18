@@ -26,7 +26,7 @@ export default Relay.createContainer(User, {
         id
         name
         surname
-        age
+        ${Age.getFragment('user')}
         ${HobbyList.getFragment('user')}
         ${FriendsList.getFragment('user')}
       }

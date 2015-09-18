@@ -3,7 +3,7 @@ import AgeMutation from './AgeMutation.js';
 class Age extends React.Component {
 
   constructor(props){
-    super(props);;
+    super(props);
     this.state = {editMode: false};
   }
 
@@ -11,7 +11,7 @@ class Age extends React.Component {
     if (this.state.age == undefined) this.state.age = this.props.user.age;
 
     this.setState({editMode:false});
-
+    console.log("Relaying");
     Relay.Store.update(new AgeMutation({age: this.state.age, user: this.props.user.id}));
   }
 
@@ -46,4 +46,16 @@ class Age extends React.Component {
   }
 }
 
-export default Age;
+export default Relay.createContainer(Age, {
+  fragments: {
+    // You can compose a mutation's query fragments like you would those
+    // of any other RelayContainer. This ensures that the data depended
+    // upon by the mutation will be fetched and ready for use.
+    user: () => Relay.QL`
+      fragment on User {
+        age
+        ${AgeMutation.getFragment('age')},
+      }
+    `
+  }
+});
