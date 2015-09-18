@@ -1,3 +1,5 @@
+import AgeMutation from './AgeMutation.js';
+
 class Age extends React.Component {
 
   constructor(props){
@@ -10,7 +12,7 @@ class Age extends React.Component {
 
     this.setState({editMode:false});
 
-    Relay.Store.update(new UserMutation({age: this.state.age, userId: this.props.user.id}));
+    Relay.Store.update(new AgeMutation({age: this.state.age, user: this.props.user.id}));
   }
 
   handleChange (event) {
@@ -43,49 +45,5 @@ class Age extends React.Component {
     return component;
   }
 }
-
-
-//class UserMutation extends Relay.Mutation {
-//  getMutation () {
-//    console.log("getMutation");
-//    return Relay.QL`mutation { updateUser }`;
-//  }
-//
-//  getVariables () {
-//    console.log("getVariables", this.props);
-//    let age = this.props.age;
-//    let userId = this.props.userId;
-//
-//    return {age: age, userId:userId}
-//  }
-//
-//  getFatQuery () {
-//    console.log("getFatQuery", this.props);
-//    return Relay.QL`
-//      fragment on User {
-//        user { age }
-//      }
-//    `
-//  }
-//
-//  getConfigs () {
-//    console.log("getConfigs", this.props);
-//    return [{
-//      type: 'FIELDS_CHANGE',
-//      fieldIDs: {
-//        age: this.props.age
-//      }
-//    }];
-//  }
-//
-//  static fragments = {
-//    user: () => Relay.QL`
-//      fragment on User {
-//        age
-//      }
-//    `
-//  };
-//
-//}
 
 export default Age;

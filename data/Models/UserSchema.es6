@@ -24,7 +24,11 @@ let User = mongoose.model('User', UserSchema);
 
 exports.UserSchema = User;
 
-exports.getUserById = (root, {id}) => {
+exports.getQueryUserById = (root, {id}) => {
+  return this.getUserById(id);
+};
+
+exports.getUserById = (id) => {
   return new Promise((resolve, reject) => {
     User.findOne({id:id}).populate('hobbies friends').exec((err,res) => {
         err ? reject(err) : resolve(res);
@@ -82,14 +86,14 @@ exports.updateUser = (root, {name, surname, age ,hobbies, friends, id}) => {
   });
 };
 
-exports.updateAge = (root, {age, id}) => {
-  console.log(age, root);
+exports.updateAge = ({age, clientMutationId}) => {
+  console.log("SCHEMA", age, clientMutationId);
 
   return new Promise((resolve, reject) => {
-    User.update({id:id}, {age:age}), (err, res) => {
-      User.find({id:id}, (err, res) => {
+    User.update({id:clientMutationId}, {age:age}, (err, res) => {
+      User.find({id:clientMutationId}, (err, res) => {
         err || res.length != 1 ? reject(err) : resolve(res[0]);
       });
-    }
-  })
+    });
+  });
 };
