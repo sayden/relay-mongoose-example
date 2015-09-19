@@ -5,7 +5,7 @@ class Age extends React.Component {
     this.state = {editMode: false};
   }
 
-  onClick () {
+  saveAge = () => {
     if (this.state.age == undefined) this.state.age = this.props.user.age;
 
     this.setState({editMode:false});
@@ -14,11 +14,20 @@ class Age extends React.Component {
       age: this.state.age,
       user: this.props.user
     }));
-  }
+  };
 
-  handleChange (event) {
+  handleChange = (event) => {
     this.setState({age:event.target.value});
-  }
+  };
+
+  handleKeyDown = (event) => {
+    let ENTER_KEY_CODE = 13;
+    let ESC_KEY_CODE = 27;
+
+    if(event.keyCode === ENTER_KEY_CODE){
+      this.saveAge();
+    }
+  };
 
   enterEditMode (event) {
     this.setState({editMode:true})
@@ -26,13 +35,13 @@ class Age extends React.Component {
 
   render() {
     let component;
-    let age = this.state.age || this.props.user.age;
+    let age = this.state.age != undefined ? this.state.age : this.props.user.age;
 
     if(this.state.editMode){
       component =
         <div>
-          <input onChange={this.handleChange.bind(this)} value={age} type="text" placeholder="Enter new Age" />
-          <button onClick={this.onClick.bind(this)}>Add</button>
+          <input onKeyDown={this.handleKeyDown} onChange={this.handleChange} value={age} type="text" placeholder="Enter new Age" />
+          <button onClick={this.saveAge}>Add</button>
         </div>
       ;
     } else {
