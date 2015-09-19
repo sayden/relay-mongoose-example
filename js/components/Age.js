@@ -1,5 +1,3 @@
-import AgeMutation from './AgeMutation.js';
-
 class Age extends React.Component {
 
   constructor(props){
@@ -49,7 +47,7 @@ class Age extends React.Component {
   }
 }
 
-export default Relay.createContainer(Age, {
+exports.Age = Relay.createContainer(Age, {
   fragments: {
     // You can compose a mutation's query fragments like you would those
     // of any other RelayContainer. This ensures that the data depended
@@ -62,3 +60,57 @@ export default Relay.createContainer(Age, {
     `
   }
 });
+
+
+class AgeMutation extends Relay.Mutation {
+  static fragments = {
+    user: () => Relay.QL`
+      fragment on User {
+        id
+        age
+      }
+    `
+  };
+
+  getMutation () {
+    return Relay.QL`mutation { updateAge }`;
+  }
+
+  getVariables () {
+    return {
+      age: this.props.age,
+      id: this.props.user.id
+    }
+  }
+
+
+  getFatQuery () {
+    return Relay.QL`
+      fragment on UpdateAgePayload {
+        user {
+          age
+        }
+      }
+    `
+  }
+
+  getConfigs () {
+    return [{
+      type: 'FIELDS_CHANGE',
+      fieldIDs: {
+        user: this.props.user.id
+      }
+    }];
+  }
+
+  getOptimisticResponse() {
+    return {
+      user: {
+        id: this.props.user.id,
+        age: this.props.age
+      },
+    };
+  }
+}
+
+exports.AgeMutation = AgeMutation;

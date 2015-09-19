@@ -1,7 +1,6 @@
 import HobbyList from './HobbyList.js';
 import FriendsList from './FriendsList.js';
-import Age from './Age.js';
-import AgeMutation from './AgeMutation.js';
+import {Age, AgeMutation} from './Age.js';
 
 class User extends React.Component {
   render() {
