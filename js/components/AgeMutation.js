@@ -39,12 +39,12 @@ export default class AgeMutation extends Relay.Mutation {
     }];
   }
 
-  //getOptimisticResponse() {
-  //  return {
-  //    user: {
-  //      id: this.props.user.id,
-  //      age: this.props.age
-  //    },
-  //  };
-  //}
+  getOptimisticResponse() {
+    return {
+      user: {
+        id: this.props.user.id,
+        age: this.props.age
+      },
+    };
+  }
 }
