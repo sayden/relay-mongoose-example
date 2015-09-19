@@ -126,7 +126,9 @@ let UserQueries = {
         type: GraphQLID
       }
     },
-    resolve: User.getQueryUserById
+    resolve: (root, {id}) => {
+      return User.getUserById(id)
+    }
   }
 };
 
@@ -166,47 +168,6 @@ let UserUpdateAge = mutationWithClientMutationId({
   mutateAndGetPayload: User.updateAge
 });
 
-let HobbyMutations = {
-  addHobby: {
-    type: HobbyType,
-    args: {
-      title: {
-        name: 'title',
-        type: new GraphQLNonNull(GraphQLString)
-      },
-      description: {
-        name: 'description',
-        type: new GraphQLNonNull(GraphQLString)
-      },
-      userId: {
-        name: 'userId',
-        type: GraphQLID
-      }
-    },
-    resolve: Hobby.addHobby,
-    resolveType: HobbyType
-  },
-  updateHobby: {
-    type: HobbyType,
-    args: {
-      id: {
-        name: 'id',
-        type: new GraphQLNonNull(GraphQLID)
-      },
-      title: {
-        name: 'title',
-        type: GraphQLString
-      },
-      description: {
-        name: 'description',
-        type: GraphQLString
-      }
-    },
-    resolve: Hobby.updateHobby,
-    resolveType: HobbyType
-  }
-};
-
 let RootQuery = new GraphQLObjectType({
   name: 'RootQuery',      //Return this type of object
 
@@ -224,9 +185,7 @@ let RootMutation = new GraphQLObjectType({
   name: "RootMutation",
 
   fields: () => ({
-    updateAge: UserUpdateAge,
-    addHobby: HobbyMutations.addHobby,
-    updateHobby: HobbyMutations.updateHobby
+    updateAge: UserUpdateAge
   })
 });
 
