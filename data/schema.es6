@@ -170,6 +170,25 @@ let UserUpdateMutation = mutationWithClientMutationId({
   mutateAndGetPayload: User.updateUser
 });
 
+let UserUpdateAgeMutation = mutationWithClientMutationId({
+  name: 'UpdateAge',
+  inputFields: {
+    id: {type: new GraphQLNonNull(GraphQLID) },
+    age: { type: new GraphQLNonNull(GraphQLInt) }
+  },
+
+  outputFields: {
+    user: {
+      type: UserType,
+      resolve: ({id}) => {
+        return User.getUserById(id)
+      }
+    }
+  },
+
+  mutateAndGetPayload: User.updateAge
+});
+
 let RootQuery = new GraphQLObjectType({
   name: 'RootQuery',      //Return this type of object
 
@@ -187,6 +206,7 @@ let RootMutation = new GraphQLObjectType({
   name: "RootMutation",
 
   fields: () => ({
+    updateAge: UserUpdateAgeMutation,
     updateUser: UserUpdateMutation
   })
 });
