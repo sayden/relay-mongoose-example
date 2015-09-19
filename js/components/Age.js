@@ -11,8 +11,8 @@ class Age extends React.Component {
     if (this.state.age == undefined) this.state.age = this.props.user.age;
 
     this.setState({editMode:false});
-    console.log("Relaying");
-    Relay.Store.update(new AgeMutation({age: this.state.age, user: this.props.user.id}));
+    Relay.Store.update(new AgeMutation({age: this.state.age, user: this.props.user}));
+    //this.props.onSave(this.state.age);
   }
 
   handleChange (event) {
@@ -54,7 +54,7 @@ export default Relay.createContainer(Age, {
     user: () => Relay.QL`
       fragment on User {
         age
-        ${AgeMutation.getFragment('age')},
+        ${AgeMutation.getFragment('user')},
       }
     `
   }

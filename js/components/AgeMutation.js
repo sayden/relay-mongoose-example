@@ -1,8 +1,9 @@
-export default class UserMutation extends Relay.Mutation {
+export default class AgeMutation extends Relay.Mutation {
   static fragments = {
-    age: () => Relay.QL`
+    user: () => Relay.QL`
       fragment on User {
         id
+        age
       }
     `
   };
@@ -12,23 +13,24 @@ export default class UserMutation extends Relay.Mutation {
   }
 
   getVariables () {
-    let age = this.props.age;
-    let userId = this.props.userId;
-
-    return {age: age, userId:userId}
+    return {
+      age: this.props.age,
+      id: this.props.user.id
+    }
   }
 
+
   getFatQuery () {
-    console.log("getFatQuery", this.props);
     return Relay.QL`
       fragment on UpdateAgePayload {
-        user { age }
+        user {
+          age
+        }
       }
     `
   }
 
   getConfigs () {
-    console.log("getConfigs", this.props);
     return [{
       type: 'FIELDS_CHANGE',
       fieldIDs: {
@@ -36,14 +38,4 @@ export default class UserMutation extends Relay.Mutation {
       }
     }];
   }
-
-  getOptimisticResponse() {
-    return {
-      user: {
-        id: this.props.user.id,
-        age: this.props.age
-      }
-    };
-  }
-
 }

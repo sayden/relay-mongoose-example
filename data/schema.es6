@@ -150,13 +150,18 @@ let HobbyQueries = {
 let UserUpdateAge = mutationWithClientMutationId({
   name: 'UpdateAge',
   inputFields: {
+    id: {type: new GraphQLNonNull(GraphQLID) },
     age: { type: new GraphQLNonNull(GraphQLInt) }
   },
 
   outputFields: {
     user: {
       type: UserType,
-      resolve: ({clientMutationId}) => User.getUserById(clientMutationId)
+      resolve: (params) => {
+        let {clientMutationId} = params;
+        console.log(params);
+        return User.getUserById(params.id)
+      }
     }
   },
 

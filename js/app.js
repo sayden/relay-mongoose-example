@@ -1,7 +1,7 @@
 import User from './components/User.js';
 import AppHomeRoute from './routes/AppHomeRoute';
 
-let userId = getQueryParams(document.location.search).user || "55fc4b2578eff2810e417cf3";
+let userId = getQueryParams(document.location.search).user || "55fd15c66acff8260e56d341";
 
 React.render(
   <Relay.RootContainer

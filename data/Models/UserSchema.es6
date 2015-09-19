@@ -88,11 +88,13 @@ exports.updateUser = (root, {name, surname, age ,hobbies, friends, id}) => {
   });
 };
 
-exports.updateAge = ({age, clientMutationId}) => {
-  console.log("SCHEMA", age, clientMutationId);
-
+exports.updateAge = (res) => {
+  let {age, clientMutationId, id} = res;
+  console.log(age, clientMutationId, res);
   return new Promise((resolve, reject) => {
-    User.update({id:clientMutationId}, {age:age}, (err, res) => {
+    console.log(age, clientMutationId);
+    User.update({id:id}, {age:age}, (err, res) => {
+      console.log(age, id, res);
       err ? reject(err) : resolve(res);
       //User.find({id:clientMutationId}, (err, res) => {
       //  err || res.length != 1 ? reject(err) : resolve(res[0]);
