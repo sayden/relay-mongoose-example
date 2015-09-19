@@ -15,8 +15,7 @@ export default class AgeMutation extends Relay.Mutation {
   getVariables () {
     return {
       age: this.props.age,
-      id: this.props.user.id,
-      clientMutationId: this.props.user.id
+      id: this.props.user.id
     }
   }
 
@@ -40,12 +39,12 @@ export default class AgeMutation extends Relay.Mutation {
     }];
   }
 
-  getOptimisticResponse() {
-    return {
-      user: {
-        id: this.props.user.id,
-        age: this.props.age
-      },
-    };
-  }
+  //getOptimisticResponse() {
+  //  return {
+  //    user: {
+  //      id: this.props.user.id,
+  //      age: this.props.age
+  //    },
+  //  };
+  //}
 }

@@ -11,8 +11,11 @@ class Age extends React.Component {
     if (this.state.age == undefined) this.state.age = this.props.user.age;
 
     this.setState({editMode:false});
-    Relay.Store.update(new AgeMutation({age: this.state.age, user: this.props.user}));
-    //this.props.onSave(this.state.age);
+
+    Relay.Store.update(new AgeMutation({
+      age: this.state.age,
+      user: this.props.user
+    }));
   }
 
   handleChange (event) {

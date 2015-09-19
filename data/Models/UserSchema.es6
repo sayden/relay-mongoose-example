@@ -90,15 +90,10 @@ exports.updateUser = (root, {name, surname, age ,hobbies, friends, id}) => {
 
 exports.updateAge = (res) => {
   let {age, clientMutationId, id} = res;
-  console.log(age, clientMutationId, res);
   return new Promise((resolve, reject) => {
-    console.log(age, clientMutationId);
     User.update({id:id}, {age:age}, (err, res) => {
-      console.log(age, id, res);
+      res.id = id;
       err ? reject(err) : resolve(res);
-      //User.find({id:clientMutationId}, (err, res) => {
-      //  err || res.length != 1 ? reject(err) : resolve(res[0]);
-      //});
     });
   });
 };

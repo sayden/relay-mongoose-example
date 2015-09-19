@@ -4,11 +4,6 @@ import Age from './Age.js';
 import AgeMutation from './AgeMutation.js';
 
 class User extends React.Component {
-  changeAge (age){
-    console.log(this);
-    Relay.Store.update(new AgeMutation({age: parseInt(age), user: this.user}));
-  }
-
   render() {
     var user = this.props.user;
 
@@ -19,7 +14,7 @@ class User extends React.Component {
         <HobbyList user={user} />
         <h2>Friends</h2>
         <FriendsList user={user} />
-        <Age user={user} onSave={this.changeAge} />
+        <Age user={user} />
       </div>
     );
   }

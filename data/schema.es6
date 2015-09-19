@@ -157,10 +157,8 @@ let UserUpdateAge = mutationWithClientMutationId({
   outputFields: {
     user: {
       type: UserType,
-      resolve: (params) => {
-        let {clientMutationId} = params;
-        console.log(params);
-        return User.getUserById(params.id)
+      resolve: ({id}) => {
+        return User.getUserById(id)
       }
     }
   },
