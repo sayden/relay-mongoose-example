@@ -3,7 +3,7 @@ import AppHomeRoute from './routes/AppHomeRoute';
 
 let userId = getQueryParams(document.location.search).user || "55fd15c66acff8260e56d341";
 
-React.render(
+ReactDOM.render(
   <Relay.RootContainer
     Component={User}
     //TODO Update userId
