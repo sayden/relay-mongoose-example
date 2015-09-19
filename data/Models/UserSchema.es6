@@ -66,7 +66,7 @@ exports.addUser = (root, {name, surname, age, hobbies, friends}) => {
   });
 };
 
-exports.updateUser = (root, {name, surname, age ,hobbies, friends, id}) => {
+exports.updateUser = ({name, surname, age ,hobbies, friends, id}) => {
   let modify = {};
 
   name ? modify.name = name : null;
@@ -77,9 +77,8 @@ exports.updateUser = (root, {name, surname, age ,hobbies, friends, id}) => {
 
   return new Promise((resolve, reject) => {
     User.update({id: id}, modify, (err, res) => {
-      User.find({id: id}, (err, res) => {
-        err || res.length != 1 ? reject(err) : resolve(res[0]);
-      });
+      res.id = id;
+      err ? reject(err) : resolve(res);
     });
   });
 };
