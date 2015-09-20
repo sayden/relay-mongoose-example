@@ -559,8 +559,10 @@ exports.Age = Relay.createContainer(Age, {
     `
   }
 });
+```
+Age component doesn't look very different to any React component. But if you look carefully in the fragment, you can find that we have `${AgeMutation.getFragment('user')}` that I understand that captures changes done after mutation.
 
-
+```javascript
 class AgeMutation extends Relay.Mutation {
   getMutation () {
     return Relay.QL`mutation { updateAge }`;
@@ -610,11 +612,7 @@ class AgeMutation extends Relay.Mutation {
     `
   };
 }
-
-exports.AgeMutation = AgeMutation;
 ```
-
-Age component doesn't look very different to any React component. But if you look carefully in the fragment, you can find that we have `${AgeMutation.getFragment('user')}` that I understand that captures changes done after mutation.
 
 Ok, the mutation is fairly complex at first sight but not so difficult:
 * **`getMutation()`** is simply the name of the mutation in GraphQL, it will be the "head" of the mutation we'll perform.
