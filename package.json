@@ -5,11 +5,11 @@
   "repository": "facebook/relay-starter-kit",
   "version": "0.1.0",
   "scripts": {
-    "start": "babel-node ./server.js",
-    "update-schema": "babel-node ./scripts/updateSchema.js",
-    "print-schema": "babel-node ./scripts/printSchema.js",
-    "print-introspection": "babel-node ./scripts/printIntrospection.js",
-    "restart": "babel-node ./scripts/updateSchema.js; babel-node ./server.js",
+    "start": "babel-node ./server.es6",
+    "update-schema": "babel-node ./scripts/updateSchema.es6",
+    "print-schema": "babel-node ./scripts/printSchema.es6",
+    "print-introspection": "babel-node ./scripts/printIntrospection.es6",
+    "restart": "babel-node ./scripts/updateSchema.es6; babel-node ./server.es6",
     "populate": "babel-node ./scripts/populationScript.es6"
   },
   "dependencies": {
