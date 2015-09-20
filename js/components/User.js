@@ -1,6 +1,6 @@
 import HobbyList from './HobbyList.js';
 import FriendsList from './FriendsList.js';
-import {Age, AgeMutation} from './Age.js';
+import {Age} from './Age.js';
 
 class User extends React.Component {
   render() {
@@ -29,7 +29,6 @@ export default Relay.createContainer(User, {
         ${Age.getFragment('user')}
         ${HobbyList.getFragment('user')}
         ${FriendsList.getFragment('user')}
-        ${AgeMutation.getFragment('user')}
       }
     `
   }

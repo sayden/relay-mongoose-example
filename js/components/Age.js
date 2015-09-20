@@ -29,9 +29,9 @@ class Age extends React.Component {
     }
   };
 
-  enterEditMode (event) {
+  enterEditMode = (event) => {
     this.setState({editMode:true})
-  }
+  };
 
   render() {
     let component;
@@ -46,8 +46,8 @@ class Age extends React.Component {
       ;
     } else {
       component =
-        <div onClick={this.enterEditMode.bind(this)}>
-          <h1>Age: {age}</h1>
+        <div onClick={this.enterEditMode}>
+          <h2>Age: {age} (click me to change my age)</h2>
         </div>
       ;
     }
@@ -76,7 +76,6 @@ class AgeMutation extends Relay.Mutation {
     user: () => Relay.QL`
       fragment on User {
         id
-        age
       }
     `
   };

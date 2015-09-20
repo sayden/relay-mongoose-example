@@ -1,5 +1,26 @@
 # Relay Mongoose example
 
+## How to use it
+You must have a mongodb instance running in the local machine. Then, in a terminal run:
+
+```bash
+git clone https://github.com/sayden/relay-mongoose-example.git
+/relay-mongoose-example
+cd ~/relay-mongoose-example
+npm install
+npm run populate
+# An id will appear as a result of previous script
+# copy paste it in app.js
+npm restart
+```
+
+app.js
+```javascript
+//Paste the generated id on npm run populate here
+let userId = getQueryParams(document.location.search).user || "55fd9fed43dcd2eb0dca5abc";
+```
+
+
 ## Folders and files
 
 ### js
@@ -267,105 +288,51 @@ Hobbies queries are pretty similar to user queries:
 2. **hobby** needs one argument: the mongodb id to query. Returns a HobbyType and it's resolve method returns a promise with the content of the hobby
 
 ### Mutations
-Mutations of user are like follows:
-```javascript
-let UserMutations = {
-  addUser: {
-    type: UserType,
-    args: {
-      name: {
-        name: 'name',
-        type: new GraphQLNonNull(GraphQLString)
-      },
-      surname: {
-        name: 'surname',
-        type: new GraphQLNonNull(GraphQLString)
-      },
-      age: {
-        name: 'age',
-        type: GraphQLInt
-      },
-      hobbies: {
-        name: 'hobbies',
-        type: new GraphQLList(GraphQLID)
-      },
-      friends: {
-        name: 'friends',
-        type: new GraphQLList(GraphQLID)
-      }
-    },
-    resolve: User.addUser,
-    resolveType: UserType
-  },
-  updateUser: {
-    type: UserType,
-    args: {
-      id: {
-        name: 'id',
-        type: GraphQLID
-      },
-      name: {
-        name: 'name',
-        type: GraphQLString
-      },
-      surname: {
-        name: 'surname',
-        type: GraphQLString
-      },
-      age: {
-        name: 'age',
-        type: GraphQLInt
-      }
-    },
-    resolve: User.updateUser,
-    resolveType: UserType
-  }
-};
-```
-* **addUser** needs minimum a name and surname string fields and accepts as optional "age", a friends list (id's of MongoDB) and a hobbies list (also id's). Returns, of course, a User type.
-* **updateUser** needs minimum an id to find the user to update. Then any parameter to updated can be passed as optional.
+Mutations are really complex thing to understand in Relay. First we should have few concepts in mind:
 
-Now the mutations of hobbies, that are really similar to User.
+* Must declare two new object types for input and output
+* Must always contain at least an input field not null of type string called `clientMutationId` then as many input fields as you need.
+* Must also have a closure that will perform the modification on the ddb and a function that will perform a query to fetch the modified object. The closure will be executed with the provided inputFields. Both must return a promise
+
+To achieve this, graphql-relay library provides a function called `mutationWithClientMutationId` that works like in the following example:
+
 ```javascript
-let HobbyMutations = {
-  addHobby: {
-    type: HobbyType,
-    args: {
-      title: {
-        name: 'title',
-        type: new GraphQLNonNull(GraphQLString)
-      },
-      description: {
-        name: 'description',
-        type: new GraphQLNonNull(GraphQLString)
-      }
-    },
-    resolve: Hobby.addHobby,
-    resolveType: HobbyType
+let UserUpdateAgeMutation = mutationWithClientMutationId({
+  name: 'UpdateAge',        //A name for the mutation
+  inputFields: {                                        // Fields you need to perform your mutation
+    id: {type: new GraphQLNonNull(GraphQLID) },         // An id to recognize the object to mutate in ddbb
+    age: { type: new GraphQLNonNull(GraphQLInt) }       // A value to mutate
   },
-  updateHobby: {
-    type: HobbyType,
-    args: {
-      id: {
-        name: 'id',
-        type: new GraphQLNonNull(GraphQLID)
-      },
-      title: {
-        name: 'title',
-        type: GraphQLString
-      },
-      description: {
-        name: 'description',
-        type: GraphQLString
+
+  outputFields: {                           //Fields that must be returned after mutation
+    user: {                                 //In our case, an entire user
+      type: UserType,
+      resolve: ({id}) => {
+        return User.getUserById(id)         //The function to fetch a user from ddbb like in user query
       }
-    },
-    resolve: Hobby.updateHobby,
-    resolveType: HobbyType
-  }
-};
+    }
+  },
+
+  mutateAndGetPayload: User.updateAge       //A closure that is used to mutate the age
+});
 ```
-* **addHobby** Works similarly to the previous addUser. Needs the title and description of the hobby as minimum arguments. It will return the new hobby type as result.
-* **updateHobby** Only needs the id of the hobby to update, then you can pass a title or a description (or both) as arguments to update.
+
+This function will return a full mutation to update age. Both functions that we passed (resolve on outputFields and mutateAndGetPayload)
+
+Resulting Graphql schema of this is like the following:
+
+```graphql
+input UpdateAgeInput {
+  id: ID!
+  age: Int!
+  clientMutationId: String!
+}
+
+type UpdateAgePayload {
+  user: User
+  clientMutationId: String!
+}
+```
 
 ## React side
 
@@ -433,22 +400,45 @@ In the RootContainer we render a Relay.RootContainer object configuring two obje
 * Component: A component as the parent of every child in the page. In our case, the User component.
 * route: A route to query that has the first query to fetch all data.
 
+Here we have also write a small function to get the contents of the url to allow some navigation between users
+
 ```javascript
 import User from './components/User.js';
 import AppHomeRoute from './routes/AppHomeRoute';
 
-React.render(
+let userId = getQueryParams(document.location.search).user || "55fd15c66acff8260e56d341";
+
+ReactDOM.render(
   <Relay.RootContainer
     Component={User}
-    route={new AppHomeRoute({userId: "55ddeec2a54c37e61e0a211c"})}
+    //TODO Update userId
+    route={new AppHomeRoute({userId: userId})}
   />,
   document.getElementById('root')
 );
 
+
+
+
+function getQueryParams(qs) {
+  qs = qs.split('+').join(' ');
+
+  var params = {},
+    tokens,
+    re = /[?&]?([^=]+)=([^&]*)/g;
+
+  while (tokens = re.exec(qs)) {
+    params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+  }
+
+  return params;
+}
+
 ```
 
 ### User (js/components/User.js)
-Is the main component. Shows the content of the User and uses a HobbyList component to pass the list of hobbies.
+It is the main component. Shows the content of the User and uses a HobbyList component to pass the list of hobbies.
+
 ```javascript
 import HobbyList from './HobbyList.js';
 
@@ -460,10 +450,10 @@ class User extends React.Component {
       <div>
         <h1>Hello {user.name} {user.surname}</h1>
         <h2>Hobbies</h2>
-        <ul>
-        <HobbyList hobbies={user} />
-        </ul>
-        <h2>Age: {user.age}</h2>
+        <HobbyList user={user} />
+        <h2>Friends</h2>
+        <FriendsList user={user} />
+        <Age user={user} />
       </div>
     );
   }
@@ -476,17 +466,163 @@ export default Relay.createContainer(User, {
         id
         name
         surname
-        age
-        ${HobbyList.getFragment('hobbies')}
+        ${Age.getFragment('user')}
+        ${HobbyList.getFragment('user')}
+        ${FriendsList.getFragment('user')}
       }
     `
   }
 });
 ```
-The most important thing is the declared fragment named `user` that matches the fragment queried by the route previously. This has few implications:
-* Any parent component that wants to use this fragment must call it with this definition `${Component.getFragment('user')}` or `${User.getFragment('user')}`
+#### User Component
+The User component is the parent of 3 components: HobbyList, FriendsList and Age. It could seem weird to use a component just for the age but it will have it's own mutation, we will see it.
+
+#### User Fragment
+The fragment `user` matches the fragment queried by the route previously. This has few implications:
+* Any parent component that wants to use this fragment must call it with this definition `${User.getFragment('user')}`
 * This means that the parent that queries this fragment will pass the fragment fetched information in a prop called `user`
 * At the same time, this component also uses a fragment within its own fragment `${HobbyList.getFragment('hobbies')}`. So now our route, that was only asking for information about the user will also fetch the info needed by this new fragment **without knowing it!!**
+
+### Age (js/components/Age.js)
+We have written an entire Age component to encapsulate "normal" and "input" behaviour as well as it's own mutation:
+
+```javascript
+class Age extends React.Component {
+
+  constructor(props){
+    super(props);
+    this.state = {editMode: false};
+  }
+
+  saveAge = () => {
+    if (this.state.age == undefined) this.state.age = this.props.user.age;
+
+    this.setState({editMode:false});
+
+    //Here we trigger the mutation on the server
+    Relay.Store.update(new AgeMutation({
+      age: this.state.age,
+      user: this.props.user
+    }));
+  };
+
+  handleChange = (event) => {
+    this.setState({age:event.target.value});
+  };
+
+  handleKeyDown = (event) => {
+    let ENTER_KEY_CODE = 13;
+    let ESC_KEY_CODE = 27;
+
+    if(event.keyCode === ENTER_KEY_CODE){
+      this.saveAge();
+    }
+  };
+
+  enterEditMode (event) {
+    this.setState({editMode:true})
+  }
+
+  render() {
+    let component;
+    let age = this.state.age != undefined ? this.state.age : this.props.user.age;
+
+    if(this.state.editMode){
+      component =
+        <div>
+          <input onKeyDown={this.handleKeyDown} onChange={this.handleChange} value={age} type="text" placeholder="Enter new Age" />
+          <button onClick={this.saveAge}>Add</button>
+        </div>
+      ;
+    } else {
+      component =
+        <div onClick={this.enterEditMode.bind(this)}>
+          <h1>Age: {age}</h1>
+        </div>
+      ;
+    }
+
+    return component;
+  }
+}
+
+exports.Age = Relay.createContainer(Age, {
+  fragments: {
+    // You can compose a mutation's query fragments like you would those
+    // of any other RelayContainer. This ensures that the data depended
+    // upon by the mutation will be fetched and ready for use.
+    user: () => Relay.QL`
+      fragment on User {
+        age
+        ${AgeMutation.getFragment('user')},
+      }
+    `
+  }
+});
+
+
+class AgeMutation extends Relay.Mutation {
+  getMutation () {
+    return Relay.QL`mutation { updateAge }`;
+  }
+
+  getVariables () {
+    return {
+      age: this.props.age,
+      id: this.props.user.id
+    }
+  }
+
+
+  getFatQuery () {
+    return Relay.QL`
+      fragment on UpdateAgePayload {
+        user {
+          age
+        }
+      }
+    `
+  }
+
+  getConfigs () {
+    return [{
+      type: 'FIELDS_CHANGE',
+      fieldIDs: {
+        user: this.props.user.id
+      }
+    }];
+  }
+
+  getOptimisticResponse() {
+    return {
+      user: {
+        id: this.props.user.id,
+        age: this.props.age
+      },
+    };
+  }
+
+  static fragments = {
+    user: () => Relay.QL`
+      fragment on User {
+        id
+      }
+    `
+  };
+}
+
+exports.AgeMutation = AgeMutation;
+```
+
+Age component doesn't look very different to any React component. But if you look carefully in the fragment, you can find that we have `${AgeMutation.getFragment('user')}` that I understand that captures changes done after mutation.
+
+Ok, the mutation is fairly complex at first sight but not so difficult:
+* **`getMutation()`** is simply the name of the mutation in GraphQL, it will be the "head" of the mutation we'll perform.
+* **`getVariables()`** When you use a mutation, to pass the changes you want via `props`. Here you return an object that must match the input of your mutation in GraphQL (explained previously) without `clientMutationId`. In this case, it was `id` and `age` the field we need to perform a mutation (and that's how we configured it before in the schema).
+* **`getFatQuery()`** This is a query that must return every possible change that our mutation could achieve. In this case, we only need a query that fetches for the `age` field.
+* **`getConfigs()`** They advise Relay how to handle the output of our mutation (`AgeUpdatePayload`) that our server will return. Basically we are telling that it's going to change some fields (one or more) and that that Relay must use the `user.id` to know what React Component should it change in client.
+* **`getOptimisticResponse()`** Is very interesting. It returns what it will be the successful response from server in case everything was ok. Of course this improves speed and usability.
+* **`fragment`** is a fragment that exposes the dependency the mutation has with the id (as it needs it to perform the mutation) so relay will ensure that the id is available wherever this mutation is used
 
 ## Final thoughts
 You can continue nesting fragments that the parent component will receive via its route in the Root Container. This is the real power of Relay
