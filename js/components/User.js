@@ -1,3 +1,5 @@
+import Relay from 'react-relay';
+import React from 'react';
 import HobbyList from './HobbyList.js';
 import FriendsList from './FriendsList.js';
 import {Age} from './Age.js';

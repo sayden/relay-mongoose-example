@@ -1,3 +1,4 @@
+import Relay from 'react-relay';
 export default class AgeMutation extends Relay.Mutation {
   static fragments = {
     user: () => Relay.QL`

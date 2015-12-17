@@ -1,4 +1,6 @@
+import Relay from 'react-relay';
 import Friend from './Friend.js';
+import React from 'react';
 
 class FriendList extends React.Component {
   render() {

@@ -1,3 +1,5 @@
+import Relay from 'react-relay';
+import React from 'react';
 class Hobby extends React.Component {
   render() {
     let hobby = this.props.hobby;

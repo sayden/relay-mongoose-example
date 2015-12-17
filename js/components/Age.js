@@ -1,4 +1,6 @@
+import Relay from 'react-relay';
 import AgeMutation from './AgeMutation.js';
+import React from 'react';
 
 class Age extends React.Component {
 

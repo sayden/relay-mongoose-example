@@ -1,3 +1,5 @@
+import Relay from 'react-relay';
+import React from 'react';
 class Friend extends React.Component {
   render() {
     let friend = this.props.friend;
