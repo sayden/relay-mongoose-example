@@ -1,3 +1,4 @@
+import Relay from 'react-relay';
 class AppHomeRoute extends Relay.Route {
   static queries = {
     user: (Component) => Relay.QL `
