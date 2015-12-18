@@ -6,7 +6,7 @@ class HobbyList extends React.Component {
   render() {
     let user = this.props.user;
     let hobbies = user.hobbies.map((hobby) => {
-      return <Hobby hobby={hobby} />;
+      return <Hobby hobby={hobby} key={hobby.__dataID__} />;
     });
 
     return (<div>

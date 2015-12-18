@@ -6,7 +6,7 @@ class FriendList extends React.Component {
   render() {
     let user = this.props.user;
     let friends = user.friends.map((friend) => {
-      return <Friend friend={friend} />;
+      return <Friend friend={friend} key={friend.__dataID__} />;
     });
 
     return (<div>{friends}</div>);
