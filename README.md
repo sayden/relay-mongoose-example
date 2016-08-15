@@ -284,7 +284,7 @@ let HobbyQueries = {
 };
 ```
 Hobbies queries are pretty similar to user queries:
-1. **hobbies** do not accepts arguments and returns a list of users `new GraphQLList(HobbyType)`. Resolve makes the query on MongoDB using Mongoose and returns the list of hobbies as a Promise.
+1. **hobbies** do not accepts arguments and returns a list of hobbies `new GraphQLList(HobbyType)`. Resolve makes the query on MongoDB using Mongoose and returns the list of hobbies as a Promise.
 2. **hobby** needs one argument: the mongodb id to query. Returns a HobbyType and it's resolve method returns a promise with the content of the hobby
 
 ### Mutations
@@ -353,9 +353,11 @@ let RootQuery = new GraphQLObjectType({
 RootQuery just needs a name and to define the fields (queries) that will accept. There is where we passed the previous queries that we have code. As you can see, RootQuery is also a GraphQLObjectType like our UserQueries and HobbyQueries.
 
 ### Declaring the schema
+```
 let schema = new GraphQLSchema({
   query: RootQuery
 });
+```
 
 Finally, we create a GraphQLSchema file to pass our queries object
 
